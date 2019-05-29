@@ -11,6 +11,8 @@ const int echoPin = 11;
 int digits[]= {0x3f,0x06,0x5b,0x4f,0x66,0x6d,
     0x7d,0x07,0x7f,0x6f};
 int dist;
+bool test =true;
+bool showValue= false;
 void sendCommand(uint8_t value)
 {
   digitalWrite(strobe, LOW);
@@ -74,8 +76,7 @@ void setLed(uint8_t value, uint8_t position)
 }
 
 // 0100 0000
-
-double distance(){
+double measure(){
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   // Sets the trigPin on HIGH state for 10 micro seconds
@@ -86,49 +87,71 @@ double distance(){
   long duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
   double distance= duration*0.034/2;
-  // Prints the distance on the Serial Monitor
-  Serial.print("Distance: ");
-  Serial.println(distance);
   return distance;
+  }
+double distance(){
+  double sum =0;
+  for(int a =0; a<50; a++){
+      sum+=measure();
+  }
+    return sum/50;
+}
+
+
+void showDistance(int dist){
+    int l = floor(log10(dist));
+  
+    for(uint8_t position = 8-l; position < 8; position++)
+    {
+      int wyswietl = dist/pow(10,8-position);
+      dist = dist % (int)(pow(10,8-position));
+      
+      uint8_t maska =digits[wyswietl];
+  
+      if (position == 6)
+      {
+        maska = maska | 0x80;
+      }
+  
+      setLed(maska, position);
+      }
+}
+
+void defaultScreen(){
+  for(uint8_t position = 0; position < 8; position++)
+    {
+      setLed(0x40, position);
+     }
   }
 
 void loop()
 {
- 
+ //reset();
  uint8_t buttons = readButtons();
- /*
-  for(uint8_t position = 0; position < 8; position++)
-  {
-    uint8_t mask = 0x1 << position;
 
-    setLed(buttons & mask ? 1 : 0, position);
-  }
-  for(uint8_t position = 0; position < 8; position++)
-  {
-    uint8_t mask = 0x1 << position;
+ uint8_t button1 = buttons & 0x01;
+ uint8_t button2 = buttons & 0x02;
 
-    setLed(0x40, position);
-  }
-  */
-  dist = (int)(distance()*100);
-
-    for(uint8_t position = 4; position < 8; position++)
-  {
-    int wyswietl = dist/pow(10,8-position);
-    dist = dist % (int)(pow(10,8-position));
-
-    
-Serial.println(wyswietl);
-    
-    uint8_t maska =digits[wyswietl];
-
-    if (position == 6)
-    {
-      maska = maska | 0x80;
+ 
+ if(button1 && test){
+    reset();
+    showValue = true;
+    dist = (int)(distance()*100);
+    test= false;
+  } 
+  if(!button1){
+    test= true;
     }
 
-    setLed(maska, position);
-    
-    
-  }
+   if(button2){
+      showValue= false;
+    }
+   if(showValue){
+     showDistance(dist);
+   }
+   else{
+        defaultScreen();
+        delayMicroseconds(200);
+        reset();
+   }
 }
