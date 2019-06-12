@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+
+\title{Ultradźwiękowy miernik odległości}
+\author{Krzysztof Pakaszewski\\Piotr Seemann\\Wiktor Mendalka\\Numer zespołu: 36\\Informatyka II rok EAIiIB 2018/2019}
+\date{Czerwiec 2019}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+\section{Opis algorytmu}
+
+Lista kroków:
+ \begin{enumerate}
+    \item Zacznij algorytm.
+    \item Wyświetl migający napis w postaci ‘--------‘ (osiem kresek poziomych).
+    \item Po naciśnięciu przycisku S1 wygaś wyświetlacz.
+    \item Dokonaj 50 pomiarów czasu biegu fali dźwiękowej do przeszkody i z powrotem, następnie podziel wynik przez 2, żeby otrzymać czas biegu fali do przeszkody i oblicz odległość od przeszkody mnożąc wynik przez prędkość dźwięku ($distance = \frac{duration \cdot 0.034}{2}$).
+    \item Oblicz średni dystans.
+    \item Wyświetl końcowy wynik pomiaru w formacie xxx.x
+    \item Po naciśnięciu przycisku S2 skasuj wynik i powróć do punktu 2.
+    \item Zakończ algorytm.
+\end{enumerate}
+
+Algorytm działa poprawnie dla zakresu  30-200 cm.
+
+\end{document}
